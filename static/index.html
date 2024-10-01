@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Translation App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        input, select, button {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #translate_button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #translate_button:hover {
+            background-color: #45a049;
+        }
+        #translated_text {
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+        }
+        /* Increased specificity for error class */
+        #translated_text.error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Offline Translation App</h1>
+
+    <label for="text">Enter text to translate:</label>
+    <input type="text" id="text" placeholder="Type here..." />
+
+    <label for="source_lang">Select source language:</label>
+    <select id="source_lang">
+        <!-- Dynamic language options will be added here, with default as PL -->
+    </select>
+
+    <label for="target_lang">Select target language:</label>
+    <select id="target_lang">
+        <!-- Dynamic language options will be added here, with default as EN -->
+    </select>
+
+    <!-- Button to trigger translation -->
+    <button id="translate_button" onclick="translateText()">Translate</button>
+
+    <h2>Translated Text:</h2>
+    <p id="translated_text"></p>
+
+    <script>
+        // Supported languages
+        const supportedLanguages = ["de", "en", "el", "es", "fr", "it", "pl", "pt", "ro", "nl"];
+
+        // Default language values
+        const defaultSourceLang = "pl"; // Polish as source
+        const defaultTargetLang = "en"; // English as target
+
+        // Populate the select box with supported languages
+        window.onload = function() {
+            const sourceLangSelect = document.getElementById("source_lang");
+            const targetLangSelect = document.getElementById("target_lang");
+
+            supportedLanguages.forEach(lang => {
+                // Source language dropdown
+                const optionSource = document.createElement("option");
+                optionSource.value = lang;
+                optionSource.text = lang.toUpperCase();
+                if (lang === defaultSourceLang) {
+                    optionSource.selected = true; // Set Polish as default for source language
+                }
+                sourceLangSelect.appendChild(optionSource);
+
+                // Target language dropdown
+                const optionTarget = document.createElement("option");
+                optionTarget.value = lang;
+                optionTarget.text = lang.toUpperCase();
+                if (lang === defaultTargetLang) {
+                    optionTarget.selected = true; // Set English as default for target language
+                }
+                targetLangSelect.appendChild(optionTarget);
+            });
+        };
+
+        async function translateText() {
+            const text = document.getElementById("text").value;
+            const sourceLang = document.getElementById("source_lang").value;
+            const targetLang = document.getElementById("target_lang").value;
+
+            // Ensure the text is not empty
+            if (text.trim() === '') {
+                document.getElementById("translated_text").innerText = "Please enter text to translate.";
+                document.getElementById("translated_text").classList.remove("error");
+                return;
+            }
+
+            try {
+                // Send translation request
+                const response = await fetch("/translate/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        source_language: sourceLang,
+                        target_language: targetLang
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    // If successful, show the translated text
+                    document.getElementById("translated_text").innerText = result.translated_text;
+                    document.getElementById("translated_text").classList.remove("error");
+                } else {
+                    // If error occurs, show the error message
+                    document.getElementById("translated_text").innerText = result.detail;
+                    document.getElementById("translated_text").classList.add("error");
+                }
+            } catch (error) {
+                document.getElementById("translated_text").innerText = "An unexpected error occurred.";
+                document.getElementById("translated_text").classList.add("error");
+            }
+        }
+    </script>
+</body>
+</html>

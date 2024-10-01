@@ -1,0 +1,26 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+
+# Poetry
+poetry.lock
+.venv/
+
+# Environment variables
+*.env
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE / Editor specific
+.vscode/
+.idea/
+
+# macOS
+.DS_Store

@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "translate-app"
+version = "0.1.0"
+description = "A FastAPI translation app using MarianMT model for offline translations"
+authors = ["Bartek Kozub <bartek.kozub@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.113.0"
+transformers = "^4.44.2"
+uvicorn = "^0.30.6"
+torch = "^2.4.1"
+sentencepiece = "^0.2.0"
+pytest-mock = "^3.14.0"
+pytest = "^8.3.2"
+httpx = "^0.27.2"
+sacremoses = "^0.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
